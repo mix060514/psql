@@ -11,3 +11,4 @@ wheels/
 
 .env
 .history
+.pytest_cache
