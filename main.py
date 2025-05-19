@@ -1,5 +1,8 @@
-import os 
+import os
+
 import psycopg as pg
+
+import pandas as pd
 
 from dotenv import load_dotenv
 
@@ -18,9 +21,16 @@ class PG:
         self.dbname = dbname
         self.user = user
         self.password = password
-        self.conn = self.connect()
+        self._conn = None
+        self.auto_commit = True
 
-    def connect(self):
+    @property
+    def conn(self) -> pg.Connection:
+        if not self._conn or self._conn.closed:
+            self._conn = self.connect()
+        return self._conn
+
+    def connect(self) -> pg.Connection:
         return pg.connect(
             host=self.host,
             port=self.port,
@@ -28,55 +38,46 @@ class PG:
             user=self.user,
             password=self.password,
         )
-    def query(self, query):
+
+    def query(self, query) -> pd.DataFrame | None:
         with self.conn.cursor() as cur:
             cur.execute(query)
-            return cur.fetchall()
+            
+            if cur.description:
+                colnames = [desc[0] for desc in cur.description]
+                results = cur.fetchall()
+                return pd.DataFrame(results, columns=colnames)
+            else:
+                # If no description, it means it's a non-select query
+                if self.auto_commit:
+                    self.conn.commit()
+                return None
+            # return cur.fetchall()
 
-# # Connect to an existing database
-# # with psycopg.connect("dbname=test user=postgres") as conn:
-# with pg.connect("postgresql://postgres:aaaaaaaa@192.168.1.103") as conn:
+    def close(self):
+        if self._conn:
+            self._conn.close()
+            self._conn = None
+    
+    def __del__(self):
+        self.close()
 
-#     # Open a cursor to perform database operations
-#     with conn.cursor() as cur:
-
-#         # Execute a command: this creates a new table
-#         cur.execute("""
-#             CREATE TABLE test (
-#                 id serial PRIMARY KEY,
-#                 num integer,
-#                 data text)
-#             """)
-
-#         # Pass data to fill a query placeholders and let Psycopg perform
-#         # the correct conversion (no SQL injections!)
-#         cur.execute(
-#             "INSERT INTO test (num, data) VALUES (%s, %s)",
-#             (100, "abc'def"))
-
-#         # Query the database and obtain data as Python objects.
-#         cur.execute("SELECT * FROM test")
-#         print(cur.fetchone())
-#         # will print (1, 100, "abc'def")
-
-#         # You can use `cur.executemany()` to perform an operation in batch
-#         cur.executemany(
-#             "INSERT INTO test (num) values (%s)",
-#             [(33,), (66,), (99,)])
-
-#         # You can use `cur.fetchmany()`, `cur.fetchall()` to return a list
-#         # of several records, or even iterate on the cursor
-#         cur.execute("SELECT id, num FROM test order by num")
-#         for record in cur:
-#             print(record)
-
-#         # Make the changes to the database persistent
-#         conn.commit()
 
 def main():
     print("Hello from psql!")
     pg = PG()
-    print(pg.query("SELECT * FROM test"))
+    df_ = pg.query("SELECT * FROM test limit 2")
+    print(df_)
+    print(type(df_))
+    if df_ is not None:
+        print(df_.shape)
+        print(df_.dtypes)
+        print(df_.describe())
+    else:
+        print("No data returned from query")
+
+    # print(pg.query("SELECT * FROM test2"))
+    # print(pg.query("create table test2 (a integer, b text)"))
 
 
 if __name__ == "__main__":
