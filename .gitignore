@@ -12,3 +12,6 @@ wheels/
 .env
 .history
 .pytest_cache
+
+.vscode
+.coverage
