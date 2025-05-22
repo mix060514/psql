@@ -1,16 +1,18 @@
 import pandas as pd
 import numpy as np
+
 from psql.pg import PG
+import psql
 
 
 def demonstrate_query():
     """Demonstrate the basic query functionality."""
     print("\n=== Basic Query Example ===")
-    pg = PG()
     
     # Simple SELECT query
     print("Executing simple SELECT query...")
-    df = pg.query("SELECT * FROM test LIMIT 2")
+    df = psql.pg.query("SELECT * FROM test LIMIT 2")
+    # df = psql.pg.sql("SELECT * FROM test LIMIT 2") # also works
     
     print(f"Result type: {type(df)}")
     if df is not None:
@@ -49,7 +51,7 @@ def demonstrate_multiple_statements():
 def demonstrate_insert_pg():
     """Demonstrate inserting a pandas DataFrame into a PostgreSQL table."""
     print("\n=== DataFrame Insertion Example ===")
-    pg = PG()
+    pg = psql.PG()
     
     # Create a test DataFrame
     print("Creating a sample DataFrame...")

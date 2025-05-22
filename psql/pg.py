@@ -100,6 +100,8 @@ class PG:
                 raise Exception(f"Error executing statement {i+1}: {str(e)}")
         
         return result
+    
+    sql = query
 
     def insert_pg(self, df: pd.DataFrame, table_name: str, overwrite: bool = False) -> None:
         """
