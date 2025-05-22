@@ -2,7 +2,7 @@ import pytest
 import pandas as pd
 import numpy as np
 
-from psql.pg import PG
+from psql.PG import PG
 
 
 def test_query():

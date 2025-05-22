@@ -1,3 +1,3 @@
-from psql.pg import PG
+from psql.PG import PG
 
 pg = PG()
