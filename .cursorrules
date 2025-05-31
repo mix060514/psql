@@ -1,0 +1,57 @@
+# Cursor Rules for PostgreSQL Interface Project
+
+## Virtual Environment
+Always activate the virtual environment before running any Python commands:
+```bash
+source .venv/bin/activate
+```
+
+## Python Path
+When running scripts from the project root, always set PYTHONPATH:
+```bash
+PYTHONPATH=. python script_name.py
+```
+
+## Testing
+To run tests, use:
+```bash
+source .venv/bin/activate && PYTHONPATH=. python tests/test_schema_functionality.py
+```
+
+Or for pytest:
+```bash
+source .venv/bin/activate && pytest tests/
+```
+
+## Dependencies
+This project uses uv for package management. To sync dependencies:
+```bash
+uv sync
+```
+
+To install the project in development mode:
+```bash
+source .venv/bin/activate && pip install -e .
+```
+
+## PostgreSQL Configuration
+Ensure `.env` file contains:
+```
+PG_HOST=localhost
+PG_PORT=5432
+PG_DBNAME=your_database
+PG_USER=your_username
+PG_PASSWORD=your_password
+```
+
+## Key Features Implemented
+- Schema management (create, list, drop schemas)
+- Smart table name parsing (schema.table format)
+- Enhanced DataFrame insertion with schema support
+- Table management (list, describe, check existence)
+- Improved data type mapping
+- Batch insertion for large datasets
+- Transaction support for multiple SQL statements
+
+## Always respond in Traditional Chinese
+所有回應都應該使用繁體中文。 
