@@ -7,8 +7,8 @@ import pandas as pd
 
 from dotenv import load_dotenv
 
-_current_dir = os.path.dirname(os.path.abspath(__file__))
-load_dotenv(os.path.join(_current_dir, ".env"))
+_root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+load_dotenv(os.path.join(_root_dir, ".env"))
 
 PG_HOST = os.environ["PG_HOST"]
 PG_PORT = os.environ["PG_PORT"]
